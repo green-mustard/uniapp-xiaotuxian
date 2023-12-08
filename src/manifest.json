@@ -1,5 +1,6 @@
 {
   "name": "小兔鲜儿",
+  // 应用标识，由 DCloud 云端分配.(打包成Android，ISO的app时才需要用到)
   "appid": "",
   "description": "",
   "versionName": "1.0.0",
@@ -50,7 +51,7 @@
   "quickapp": {},
   /* 小程序特有相关 */
   "mp-weixin": {
-    "appid": "",
+    "appid": "wx9fe584254c227812",
     "setting": {
       "urlCheck": false
     },
