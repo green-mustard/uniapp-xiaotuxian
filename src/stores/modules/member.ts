@@ -31,6 +31,7 @@ export const useMemberStore = defineStore(
     // persist: true
     // 小程序端的配置
     persist: {
+      //兼容多端的API
       storage: {
         getItem(key) {
           return uni.getStorageSync(key)
