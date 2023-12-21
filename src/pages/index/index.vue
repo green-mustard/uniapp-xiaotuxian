@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CustomNavbar from '@/pages/index/components/CustomNavbar.vue'
-import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
+import type { BannerItem, CategoryItem, GuessItem, HotItem } from '@/types/home'
 import { ref } from 'vue'
 import { getHomeBannerAPI, getHomeCategoryAPI, getHomeHotAPI } from '@/services/home'
 import { onLoad } from '@dcloudio/uni-app'
