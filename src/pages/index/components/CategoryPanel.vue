@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CategoryItem } from '@/types/home'
 
-// 定义props接收
+// 定义props 接收收据
 defineProps<{
   categoryList: CategoryItem[]
 }>()
