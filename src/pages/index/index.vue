@@ -40,18 +40,24 @@ const getHomeHotData = async () => {
 <template>
   <!-- 自定义导航栏 -->
   <CustomNavbar />
-  <!-- 自定义轮播图 -->
-  <XtxSwiper :bannerList="bannerList" />
-  <!-- 分类面板 -->
-  <CategoryPanel :categoryList="categoryList" />
-  <!-- 热门推荐 -->
-  <HotPanel :data="hotData" />
-  <view class="index"></view>
+  <scroll-view scroll-y>
+    <!-- 自定义轮播图 -->
+    <XtxSwiper :bannerList="bannerList" />
+    <!-- 分类面板 -->
+    <CategoryPanel :categoryList="categoryList" />
+    <!-- 热门推荐 -->
+    <HotPanel :data="hotData" />
+    <!-- 猜你喜欢 -->
+    <XtxGuess />
+  </scroll-view>
 </template>
 
 <style lang="scss">
 //首页背景颜色
 page {
   background-color: #f7f7f7;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 </style>
