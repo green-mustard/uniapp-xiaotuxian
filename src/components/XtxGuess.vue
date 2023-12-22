@@ -33,6 +33,13 @@ const getHomeGuessData = async () => {
   }
 }
 
+// 重置数据
+const resetData = () => {
+  pageParams.page = 1
+  guessList.value = []
+  finished.value = false
+}
+
 // 组件挂载完毕调用API获取数据
 onMounted(() => {
   getHomeGuessData()
@@ -40,6 +47,7 @@ onMounted(() => {
 
 // 暴露组件内部的方法
 defineExpose({
+  resetData,
   getMore: getHomeGuessData,
 })
 </script>
