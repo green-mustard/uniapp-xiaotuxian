@@ -7,6 +7,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import CategoryPanel from '@/pages/index/components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
 import type { XtxGuessInstance } from '@/types/component'
+import PageSkeleton from './components/PageSkeleton.vue'
 
 // 获取banner数据
 const bannerList = ref<BannerItem[]>([])
@@ -15,10 +16,13 @@ const getHomeBannerData = async () => {
   // console.log(res)
   bannerList.value = res.result
 }
-onLoad(() => {
-  getHomeBannerData()
-  getHomeCategoryData()
-  getHomeHotData()
+
+// 是否加载中的标记
+const isLoading = ref(false)
+onLoad(async () => {
+  isLoading.value = true
+  await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
+  isLoading.value = false
 })
 
 // 获取前台分类数据
@@ -79,14 +83,18 @@ const onRefresherrefresh = async () => {
     scroll-y
     @scrolltolower="onScrolltolower"
   >
-    <!-- 自定义轮播图 -->
-    <XtxSwiper :bannerList="bannerList" />
-    <!-- 分类面板 -->
-    <CategoryPanel :categoryList="categoryList" />
-    <!-- 热门推荐 -->
-    <HotPanel :data="hotData" />
-    <!-- 猜你喜欢 -->
-    <XtxGuess ref="guessRef" />
+    <!-- 骨架屏 -->
+    <PageSkeleton v-if="isLoading" />
+    <template v-else>
+      <!-- 自定义轮播图 -->
+      <XtxSwiper :bannerList="bannerList" />
+      <!-- 分类面板 -->
+      <CategoryPanel :categoryList="categoryList" />
+      <!-- 热门推荐 -->
+      <HotPanel :data="hotData" />
+      <!-- 猜你喜欢 -->
+      <XtxGuess ref="guessRef" />
+    </template>
   </scroll-view>
 </template>
 
