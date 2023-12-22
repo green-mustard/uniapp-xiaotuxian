@@ -1,19 +1,46 @@
 <script setup lang="ts">
 import { getHomeGuessAPI } from '@/services/home'
+import type { PageParams } from '@/types/global'
 import type { GuessItem } from '@/types/home'
 import { onMounted, ref } from 'vue'
 
+// 分页参数
+// 将可选参数转成必选
+const pageParams: Required<PageParams> = {
+  page: 30,
+  pageSize: 10,
+}
+// 已结束的标记
+const finished = ref(false)
 // 获取猜你喜欢的数据
 const guessList = ref<GuessItem[]>([])
 const getHomeGuessData = async () => {
-  const res = await getHomeGuessAPI()
+  // 退出判断
+  if (finished.value) {
+    return uni.showToast({ icon: 'none', title: '没有更多内容了~' })
+  }
+  const res = await getHomeGuessAPI(pageParams)
   // console.log(res)
-  guessList.value = res.result.items
+  // guessList.value = res.result.items
+  // 数组追加
+  guessList.value.push(...res.result.items)
+  // 分页条件
+  if (pageParams.page < res.result.pages) {
+    // 页码累加
+    pageParams.page++
+  } else {
+    finished.value = true
+  }
 }
 
 // 组件挂载完毕调用API获取数据
 onMounted(() => {
   getHomeGuessData()
+})
+
+// 暴露组件内部的方法
+defineExpose({
+  getMore: getHomeGuessData,
 })
 </script>
 
@@ -39,7 +66,7 @@ onMounted(() => {
       </view>
     </navigator>
   </view>
-  <view class="loading-text"> 正在加载... </view>
+  <view class="loading-text">{{ finished ? '没有更多内容了~' : '正在加载中...' }}</view>
 </template>
 
 <style lang="scss">

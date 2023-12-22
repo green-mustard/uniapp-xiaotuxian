@@ -6,6 +6,7 @@ import { getHomeBannerAPI, getHomeCategoryAPI, getHomeHotAPI } from '@/services/
 import { onLoad } from '@dcloudio/uni-app'
 import CategoryPanel from '@/pages/index/components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
+import type { XtxGuessInstance } from '@/types/component'
 
 // 获取banner数据
 const bannerList = ref<BannerItem[]>([])
@@ -35,12 +36,20 @@ const getHomeHotData = async () => {
   // console.log(res)
   hotData.value = res.result
 }
+
+// 获取猜你喜欢组件的实例
+const guessRef = ref<XtxGuessInstance>()
+const onScrolltolower = () => {
+  // console.log(123)
+  guessRef.value?.getMore()
+}
 </script>
 
 <template>
   <!-- 自定义导航栏 -->
   <CustomNavbar />
-  <scroll-view scroll-y>
+  <!-- 滚动容器 -->
+  <scroll-view scroll-y @scrolltolower="onScrolltolower">
     <!-- 自定义轮播图 -->
     <XtxSwiper :bannerList="bannerList" />
     <!-- 分类面板 -->
@@ -48,7 +57,7 @@ const getHomeHotData = async () => {
     <!-- 热门推荐 -->
     <HotPanel :data="hotData" />
     <!-- 猜你喜欢 -->
-    <XtxGuess />
+    <XtxGuess ref="guessRef" />
   </scroll-view>
 </template>
 
