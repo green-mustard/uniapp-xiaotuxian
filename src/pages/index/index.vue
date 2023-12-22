@@ -43,13 +43,35 @@ const onScrolltolower = () => {
   // console.log(123)
   guessRef.value?.getMore()
 }
+
+// 下拉刷新的状态
+const isTriggered = ref(false)
+// 自定义下拉刷新被触发
+const onRefresherrefresh = async () => {
+  // console.log('自定义下拉刷新被触发')
+  // 开始下拉动画
+  isTriggered.value = true
+  // await getHomeBannerData()
+  // await getHomeCategoryData()
+  // await getHomeHotData()
+  // 优化发送请求
+  await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
+  // 结束下拉动画
+  isTriggered.value = false
+}
 </script>
 
 <template>
   <!-- 自定义导航栏 -->
   <CustomNavbar />
   <!-- 滚动容器 -->
-  <scroll-view scroll-y @scrolltolower="onScrolltolower">
+  <scroll-view
+    refresher-enabled
+    @refresherrefresh="onRefresherrefresh"
+    :refresher-triggered="isTriggered"
+    scroll-y
+    @scrolltolower="onScrolltolower"
+  >
     <!-- 自定义轮播图 -->
     <XtxSwiper :bannerList="bannerList" />
     <!-- 分类面板 -->
