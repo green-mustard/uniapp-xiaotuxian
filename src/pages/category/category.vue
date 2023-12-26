@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { getHomeBannerAPI } from '@/services/home'
 import { getCategoryAPI } from '@/services/category'
-import type { BannerItem, CategoryItem } from '@/types/home'
+import type { BannerItem } from '@/types/home'
+import type { CategoryItem } from '@/types/category'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { computed } from 'vue'
 
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
@@ -27,6 +29,11 @@ const getCategoryData = async () => {
 onLoad(() => {
   getBannerData()
   getCategoryData()
+})
+
+// 提取当前二级分类的数据
+const subCategoryList = computed(() => {
+  return categoryList.value[activeIndex.value]?.children || []
 })
 </script>
 
@@ -57,27 +64,24 @@ onLoad(() => {
         <!-- 焦点图 -->
         <XtxSwiper class="banner" :bannerList="bannerList" />
         <!-- 内容区域 -->
-        <view class="panel" v-for="item in 3" :key="item">
+        <view class="panel" v-for="item in subCategoryList" :key="item.id">
           <view class="title">
-            <text class="name">宠物用品</text>
+            <text class="name">{{ item.name }}</text>
             <navigator class="more" hover-class="none">全部</navigator>
           </view>
           <view class="section">
             <navigator
-              v-for="goods in 4"
-              :key="goods"
+              v-for="goods in item.goods"
+              :key="goods.id"
               class="goods"
               hover-class="none"
-              :url="`/pages/goods/goods?id=`"
+              :url="`/pages/goods/goods?id=${goods.id}`"
             >
-              <image
-                class="image"
-                src="https://yanxuan-item.nosdn.127.net/674ec7a88de58a026304983dd049ea69.jpg"
-              ></image>
-              <view class="name ellipsis">木天蓼逗猫棍</view>
+              <image class="image" :src="goods.picture"></image>
+              <view class="name ellipsis">{{ goods.name }}</view>
               <view class="price">
                 <text class="symbol">¥</text>
-                <text class="number">16.00</text>
+                <text class="number">{{ goods.price }}</text>
               </view>
             </navigator>
           </view>

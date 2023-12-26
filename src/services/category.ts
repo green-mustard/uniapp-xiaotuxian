@@ -1,4 +1,4 @@
-import type { CategoryItem } from '@/types/home'
+import type { CategoryItem } from '@/types/category'
 import { http } from '@/utils/http'
 
 // 分类列表的请求接口
