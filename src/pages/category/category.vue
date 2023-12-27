@@ -78,7 +78,7 @@ const subCategoryList = computed(() => {
               :key="goods.id"
               class="goods"
               hover-class="none"
-              :url="`/pages/goods/goods?id=${goods.id}`"
+              :url="`/pages/goodsdetail/goodsdetail?id=${goods.id}`"
             >
               <image class="image" :src="goods.picture"></image>
               <view class="name ellipsis">{{ goods.name }}</view>
