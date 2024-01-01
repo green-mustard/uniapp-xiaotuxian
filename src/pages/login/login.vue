@@ -3,6 +3,8 @@
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app'
 import { loginWxMinAPI, loginWxMinSimpleAPI } from '@/services/login'
+import { useMemberStore } from '@/stores'
+import type { LoginResult } from '@/types/members'
 
 // 获取code（登录凭证）
 let code = '' //试一下用ref直接代替空字符串''
@@ -10,6 +12,19 @@ onLoad(async () => {
   const res = await wx.login()
   code = res.code
 })
+
+// 封装保存会员信息的函数
+const loginSuccess = (profile: LoginResult) => {
+  // 保存会员信息
+  const memberSotre = useMemberStore()
+  memberSotre.setProfile(profile)
+  // 成功提示
+  uni.showToast({ icon: 'success', title: '登录成功' })
+  // 页面跳转(跳转tabBar页面只能使用switchTab跳转)
+  setTimeout(() => {
+    uni.switchTab({ url: '/pages/my/my' })
+  }, 500)
+}
 
 // 获取用户手机号码(实际开发中的做法)
 const onGetPhoneNumber: UniHelper.ButtonOnGetphonenumber = async (event) => {
@@ -20,13 +35,14 @@ const onGetPhoneNumber: UniHelper.ButtonOnGetphonenumber = async (event) => {
     encryptedData,
     iv,
   })
-  console.log(res)
+  // console.log(res)
+  loginSuccess(res.result)
 }
 // 模拟手机号码快捷登录(练习开发)
 const onGetPhoneNumberSimple = async () => {
   const res = await loginWxMinSimpleAPI('13980976506')
-  console.log(res)
-  uni.showToast({ icon: 'none', title: '登录成功' })
+  // console.log(res)
+  loginSuccess(res.result)
 }
 </script>
 
