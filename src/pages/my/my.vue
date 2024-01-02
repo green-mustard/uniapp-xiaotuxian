@@ -16,6 +16,8 @@ const orderTypes = [
 
 // 获取会员信息
 const memberStore = useMemberStore()
+
+// 调用猜你喜欢板块的组合式函数
 const { guessRef, onScrolltolower } = useGuessList()
 </script>
 

@@ -41,7 +41,7 @@ const getHomeHotData = async () => {
   hotData.value = res.result
 }
 
-// 获取猜你喜欢组件的实例
+// 获取猜你喜欢组件的组合式函数
 const { guessRef, onScrolltolower } = useGuessList()
 
 // 下拉刷新的状态
