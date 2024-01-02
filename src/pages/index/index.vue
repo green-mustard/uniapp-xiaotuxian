@@ -6,8 +6,8 @@ import { getHomeBannerAPI, getHomeCategoryAPI, getHomeHotAPI } from '@/services/
 import { onLoad } from '@dcloudio/uni-app'
 import CategoryPanel from '@/pages/index/components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
-import type { XtxGuessInstance } from '@/types/component'
 import PageSkeleton from './components/PageSkeleton.vue'
+import { useGuessList } from '@/composables'
 
 // 获取banner数据
 const bannerList = ref<BannerItem[]>([])
@@ -42,11 +42,7 @@ const getHomeHotData = async () => {
 }
 
 // 获取猜你喜欢组件的实例
-const guessRef = ref<XtxGuessInstance>()
-const onScrolltolower = () => {
-  // console.log(123)
-  guessRef.value?.getMore()
-}
+const { guessRef, onScrolltolower } = useGuessList()
 
 // 下拉刷新的状态
 const isTriggered = ref(false)
