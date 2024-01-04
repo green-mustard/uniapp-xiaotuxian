@@ -2,7 +2,7 @@
 import { getMemberProfileAPI, changeMemberProfileAPI } from '@/services/profile'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
-import type { ProfileDetail } from '@/types/members'
+import type { ProfileDetail, Gender } from '@/types/members'
 import { useMemberStore } from '@/stores'
 
 // 获取屏幕边界到安全区域距离
@@ -57,10 +57,17 @@ const onChangeAvatar = () => {
   })
 }
 
+// 更改性别的回调
+const onGenderChange: UniHelper.RadioGroupOnChange = (event) => {
+  // console.log(event.detail.value)
+  profile.value.gender = event.detail.value as Gender
+}
+
 // 提交表单的回调
 const onSubmit = async () => {
   const res = await changeMemberProfileAPI({
     nickname: profile.value?.nickname,
+    gender: profile.value.gender,
   })
   // console.log(res)
   // 更新store中的昵称
@@ -100,9 +107,9 @@ const onSubmit = async () => {
         </view>
         <view class="form-item">
           <text class="label">性别</text>
-          <radio-group>
+          <radio-group @change="onGenderChange">
             <label class="radio">
-              <radio value="男" color="#27ba9b" :checked="profile?.gender === '男'" />
+              <radio value="男" color="#27ba9b" :checked="profile?.gender === '男' || true" />
               男
             </label>
             <label class="radio">
