@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getMemberProfileAPI } from '@/services/profile'
+import { getMemberProfileAPI, changeMemberProfileAPI } from '@/services/profile'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { ProfileDetail } from '@/types/members'
@@ -8,7 +8,7 @@ import type { ProfileDetail } from '@/types/members'
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
 // 获取个人信息
-const profile = ref<ProfileDetail>()
+const profile = ref({} as ProfileDetail) //修改个人信息，需提供初始值
 const getMemberProfileData = async () => {
   const res = await getMemberProfileAPI()
   // console.log(res)
@@ -50,6 +50,15 @@ const onChangeAvatar = () => {
     },
   })
 }
+
+// 提交表单的回调
+const onSubmit = async () => {
+  const res = await changeMemberProfileAPI({
+    nickname: profile.value?.nickname,
+  })
+  // console.log(res)
+  uni.showToast({ icon: 'success', title: '保存成功' })
+}
 </script>
 
 <template>
@@ -76,7 +85,7 @@ const onChangeAvatar = () => {
         </view>
         <view class="form-item">
           <text class="label">昵称</text>
-          <input class="input" type="text" placeholder="请填写昵称" :value="profile?.nickname" />
+          <input class="input" type="text" placeholder="请填写昵称" v-model="profile!.nickname" />
         </view>
         <view class="form-item">
           <text class="label">性别</text>
@@ -117,7 +126,7 @@ const onChangeAvatar = () => {
         </view>
       </view>
       <!-- 提交按钮 -->
-      <button class="form-button">保 存</button>
+      <button class="form-button" @tap="onSubmit">保 存</button>
     </view>
   </view>
 </template>
