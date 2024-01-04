@@ -11,7 +11,7 @@ export const getMemberProfileAPI = () => {
 
 // 修改个人信息的API
 export const changeMemberProfileAPI = (data: ProfileParams) => {
-  return http({
+  return http<ProfileParams>({
     method: 'PUT',
     url: '/member/profile',
     data,
