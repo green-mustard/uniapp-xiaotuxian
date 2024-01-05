@@ -63,11 +63,38 @@ const onGenderChange: UniHelper.RadioGroupOnChange = (event) => {
   profile.value.gender = event.detail.value as Gender
 }
 
+// 修改生日的回调
+const onBirthdayChange: UniHelper.DatePickerOnChange = (event) => {
+  // console.log(event.detail.value)
+  profile.value.birthday = event.detail.value
+}
+
+// 修改城市的回调
+let fullLocationCode: [string, string, string] = ['', '', '']
+const onFullLocationChange: UniHelper.RegionPickerOnChange = (event) => {
+  console.log(event.detail.value)
+  profile.value.fullLocation = event.detail.value.join(' ')
+  fullLocationCode = event.detail.code!
+}
+
+// 修改职业
+const onProfessionChange: UniHelper.InputOnBlur = (event) => {
+  console.log(event.detail.value)
+  profile.value.profession = event.detail.value
+}
+
 // 提交表单的回调
 const onSubmit = async () => {
+  const { nickname, gender, birthday, profession, fullLocation } = profile.value
   const res = await changeMemberProfileAPI({
-    nickname: profile.value?.nickname,
-    gender: profile.value.gender,
+    nickname,
+    gender,
+    birthday,
+    fullLocation,
+    provinceCode: fullLocationCode[0],
+    cityCode: fullLocationCode[1],
+    countyCode: fullLocationCode[2],
+    profession,
   })
   // console.log(res)
   // 更新store中的昵称
@@ -126,6 +153,7 @@ const onSubmit = async () => {
             start="1900-01-01"
             :end="new Date()"
             :value="profile?.birthday"
+            @change="onBirthdayChange"
           >
             <view v-if="profile?.birthday">{{ profile?.birthday }}</view>
             <view class="placeholder" v-else>请选择日期</view>
@@ -133,14 +161,25 @@ const onSubmit = async () => {
         </view>
         <view class="form-item">
           <text class="label">城市</text>
-          <picker class="picker" mode="region" :value="profile?.fullLocation?.split(' ')">
+          <picker
+            class="picker"
+            mode="region"
+            :value="profile?.fullLocation?.split(' ')"
+            @change="onFullLocationChange"
+          >
             <view v-if="profile?.fullLocation">{{ profile?.fullLocation }}</view>
             <view class="placeholder" v-else>请选择城市</view>
           </picker>
         </view>
         <view class="form-item">
           <text class="label">职业</text>
-          <input class="input" type="text" placeholder="请填写职业" :value="profile?.profession" />
+          <input
+            class="input"
+            type="text"
+            placeholder="请填写职业"
+            :value="profile?.profession"
+            @blur="onProfessionChange"
+          />
         </view>
       </view>
       <!-- 提交按钮 -->
