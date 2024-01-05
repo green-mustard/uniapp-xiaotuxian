@@ -70,7 +70,7 @@ const onBirthdayChange: UniHelper.DatePickerOnChange = (event) => {
 }
 
 // 修改城市的回调
-let fullLocationCode: [string, string, string] = ['', '', '']
+let fullLocationCode: [string, string, string] = ['', '', ''] // 类型为元组
 const onFullLocationChange: UniHelper.RegionPickerOnChange = (event) => {
   console.log(event.detail.value)
   profile.value.fullLocation = event.detail.value.join(' ')
@@ -177,7 +177,7 @@ const onSubmit = async () => {
             class="input"
             type="text"
             placeholder="请填写职业"
-            :value="profile?.profession"
+            v-model="profile!.profession"
             @blur="onProfessionChange"
           />
         </view>
