@@ -12,10 +12,18 @@ export const postMemberAddressAPI = (data: AddressParams) => {
   })
 }
 
-// 获取收获地址列表
+// 获取收货地址列表
 export const getAddressListAPI = () => {
   return http<AddressItem[]>({
     method: 'GET',
     url: '/member/address',
+  })
+}
+
+// 获取收货地址详情
+export const getAddressByIdAPI = (id: string) => {
+  return http({
+    method: 'GET',
+    url: `/member/address/${id}`,
   })
 }

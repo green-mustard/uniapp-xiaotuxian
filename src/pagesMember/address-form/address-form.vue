@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { postMemberAddressAPI } from '@/services/address'
+import { getAddressByIdAPI, postMemberAddressAPI } from '@/services/address'
+import { onLoad } from '@dcloudio/uni-app'
 
 // 表单数据
 const form = ref({
@@ -39,6 +40,20 @@ const onRegionChange: UniHelper.RegionPickerOnChange = (event) => {
 const onSwichChange: UniHelper.SwitchOnChange = (event) => {
   form.value.isDefault = event.detail.value ? 1 : 0
 }
+
+// 获取收货地址详情的回调函数
+const getAddressByIdData = async () => {
+  if (query.id) {
+    const res = await getAddressByIdAPI(query.id)
+    // console.log(res)
+    // 把获取的数据合并到表单中
+    Object.assign(form.value, res.result)
+  }
+}
+
+onLoad(() => {
+  getAddressByIdData()
+})
 
 // 保存并提交表单数据
 const onSubmit = async () => {

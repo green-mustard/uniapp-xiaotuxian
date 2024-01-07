@@ -12,7 +12,7 @@ const getAddressListData = async () => {
   addressList.value = res.result
 }
 
-// onShow声明周期，每次页面显示的时候都会执行里面的回调
+// onShow生命周期，每次页面显示的时候都会执行里面的回调
 onShow(() => {
   getAddressListData()
 })
