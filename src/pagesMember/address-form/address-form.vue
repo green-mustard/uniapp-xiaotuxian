@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { getAddressByIdAPI, postMemberAddressAPI } from '@/services/address'
+import { changeAddressAPI, getAddressByIdAPI, postMemberAddressAPI } from '@/services/address'
 import { onLoad } from '@dcloudio/uni-app'
 
 // 表单数据
@@ -57,10 +57,15 @@ onLoad(() => {
 
 // 保存并提交表单数据
 const onSubmit = async () => {
-  // 新建地址的请求
-  await postMemberAddressAPI(form.value)
+  if (query.id) {
+    // 修改收货地址的回调
+    await changeAddressAPI(query.id, form.value)
+  } else {
+    // 新建地址的请求
+    await postMemberAddressAPI(form.value)
+  }
   // 成功的提示
-  uni.showToast({ icon: 'success', title: '保存成功' })
+  uni.showToast({ icon: 'success', title: query.id ? '修改成功' : '保存成功' })
   // 返回上一页
   setTimeout(() => {
     uni.navigateBack()

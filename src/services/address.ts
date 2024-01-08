@@ -27,3 +27,12 @@ export const getAddressByIdAPI = (id: string) => {
     url: `/member/address/${id}`,
   })
 }
+
+// 修改收货地址
+export const changeAddressAPI = (id: string, data: AddressParams) => {
+  return http({
+    method: 'PUT',
+    url: `/member/address/${id}`,
+    data,
+  })
+}
