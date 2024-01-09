@@ -38,7 +38,7 @@ const deleteAddressItem = (id: string) => {
     <!-- 地址列表 -->
     <scroll-view class="scroll-view" scroll-y>
       <view v-if="addressList?.length" class="address">
-        <uni-swipe-action class="address-list">
+        <uni-swipe-action class="address-list" autoClose>
           <!-- 收货地址项 -->
           <uni-swipe-action-item class="item" v-for="item in addressList" :key="item.id">
             <view class="item-content">
