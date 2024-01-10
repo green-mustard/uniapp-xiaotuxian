@@ -1,12 +1,14 @@
 // src/pages/goodsDetail/goodsDetail.vue
 <script setup lang="ts">
 import { getGoodsByIdAPI } from '@/services/goodsDetail'
+import { addCartAPI } from '@/services/cart'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref, computed } from 'vue'
 import type { GoodsResult } from '@/types/goods'
 import ServicePanel from '@/pages/goodsDetail/components/servicePanel.vue'
 import AddressPanel from '@/pages//goodsDetail//components/addressPanel.vue'
 import type {
+  SkuPopupEvent,
   SkuPopupInstance,
   SkuPopupLocaldata,
 } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
@@ -114,6 +116,14 @@ const skuPopupRef = ref<SkuPopupInstance>()
 const selectedArrText = computed(() => {
   return skuPopupRef.value?.selectArr?.join(' ').trim() || '请选择商品规格'
 })
+
+// 加入购物车的回调
+const onAddCart = async (event: SkuPopupEvent) => {
+  // 调用API
+  await addCartAPI({ skuId: event._id, count: event.buy_num })
+  uni.showToast({ icon: 'success', title: '成功加入购物车' })
+  isShow.value = false
+}
 </script>
 
 <template>
@@ -130,6 +140,7 @@ const selectedArrText = computed(() => {
       borderColor: '#27ba9b',
       backgroundColor: '#e9f8f5',
     }"
+    @add-cart="onAddCart"
   />
   <scroll-view scroll-y class="viewport">
     <!-- 基本信息 -->
