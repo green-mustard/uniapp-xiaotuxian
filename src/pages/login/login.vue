@@ -22,7 +22,7 @@ const loginSuccess = (profile: LoginResult) => {
   uni.showToast({ icon: 'success', title: '登录成功' })
   // 页面跳转(跳转tabBar页面只能使用switchTab跳转)
   setTimeout(() => {
-    uni.switchTab({ url: '/pages/my/my' })
+    uni.navigateBack()
   }, 500)
 }
 
@@ -95,6 +95,7 @@ page {
 .logo {
   flex: 1;
   text-align: center;
+
   image {
     width: 220rpx;
     height: 220rpx;
@@ -127,6 +128,7 @@ page {
     font-size: 28rpx;
     border-radius: 72rpx;
     color: #fff;
+
     .icon {
       font-size: 40rpx;
       margin-right: 6rpx;
@@ -144,6 +146,7 @@ page {
   .extra {
     flex: 1;
     padding: 70rpx 70rpx 0;
+
     .caption {
       width: 440rpx;
       line-height: 1;
@@ -151,6 +154,7 @@ page {
       font-size: 26rpx;
       color: #999;
       position: relative;
+
       text {
         transform: translate(-40%);
         background-color: #fff;
@@ -165,6 +169,7 @@ page {
       justify-content: center;
       align-items: center;
       margin-top: 70rpx;
+
       button {
         padding: 0;
         background-color: transparent;
@@ -190,6 +195,7 @@ page {
         border-radius: 50%;
       }
     }
+
     .icon-weixin::before {
       border-color: #06c05f;
       color: #06c05f;
