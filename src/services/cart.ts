@@ -21,10 +21,11 @@ export const getCartListAPI = () => {
   })
 }
 
-// 删除商品的API
-export const deleteCartItem = () => {
+// 删除/清空购物车商品的API
+export const deleteCartItem = (data: { ids: string[] }) => {
   return http({
     method: 'DELETE',
     url: '/member/cart',
+    data,
   })
 }

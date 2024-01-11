@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMemberStore } from '@/stores'
-import { getCartListAPI } from '@/services/cart'
+import { deleteCartItem, getCartListAPI } from '@/services/cart'
 import { onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { CartItem } from '@/types/cart'
@@ -22,10 +22,23 @@ onShow(() => {
   if (memberStore.profile) {
     getCartListData()
   }
+  console.log(123)
 })
 
 // 删除商品的回调
-const onDeleteItem = () => {}
+const onDeleteItem = (skuId: string) => {
+  // 二次确认弹窗
+  uni.showModal({
+    content: '确定删除吗？',
+    success: async (res) => {
+      if (res.confirm) {
+        await deleteCartItem({ ids: [skuId] })
+      }
+      // 重新获取购物车列表数据
+      getCartListData()
+    },
+  })
+}
 
 // 调用猜你喜欢板块的组合式函数
 const { guessRef, onScrolltolower } = useGuessList()
@@ -72,7 +85,7 @@ const { guessRef, onScrolltolower } = useGuessList()
             <!-- 右侧删除按钮 -->
             <template #right>
               <view class="cart-swipe-right">
-                <button class="button delete-button" @tap="onDeleteItem">删除</button>
+                <button class="button delete-button" @tap="onDeleteItem(item.skuId)">删除</button>
               </view>
             </template>
           </uni-swipe-action-item>
