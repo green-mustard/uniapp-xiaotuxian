@@ -22,10 +22,22 @@ export const getCartListAPI = () => {
 }
 
 // 删除/清空购物车商品的API
-export const deleteCartItem = (data: { ids: string[] }) => {
+export const deleteCartItemAPI = (data: { ids: string[] }) => {
   return http({
     method: 'DELETE',
     url: '/member/cart',
+    data,
+  })
+}
+
+// 修改商品数量的API
+export const changeCartBySkuIdAPI = (
+  skuId: string,
+  data: { selected?: Boolean; count?: number },
+) => {
+  return http({
+    method: 'PUT',
+    url: `/member/cart/${skuId}`,
     data,
   })
 }

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useMemberStore } from '@/stores'
-import { deleteCartItem, getCartListAPI } from '@/services/cart'
+import { deleteCartItemAPI, getCartListAPI, changeCartBySkuIdAPI } from '@/services/cart'
 import { onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { CartItem } from '@/types/cart'
 import { useGuessList } from '@/composables'
+import type { InputNumberBoxEvent } from '@/components/vk-data-input-number-box/vk-data-input-number-box'
 
 // 获取会员Store
 const memberStore = useMemberStore()
@@ -22,7 +23,6 @@ onShow(() => {
   if (memberStore.profile) {
     getCartListData()
   }
-  console.log(123)
 })
 
 // 删除商品的回调
@@ -32,12 +32,18 @@ const onDeleteItem = (skuId: string) => {
     content: '确定删除吗？',
     success: async (res) => {
       if (res.confirm) {
-        await deleteCartItem({ ids: [skuId] })
+        await deleteCartItemAPI({ ids: [skuId] })
+        // 重新获取购物车列表数据
+        getCartListData()
       }
-      // 重新获取购物车列表数据
-      getCartListData()
     },
   })
+}
+
+// 修改商品数量的回调
+const onChangeCount = (event: InputNumberBoxEvent) => {
+  // console.log(event);
+  changeCartBySkuIdAPI(event.index, { count: event.value })
 }
 
 // 调用猜你喜欢板块的组合式函数
@@ -77,9 +83,13 @@ const { guessRef, onScrolltolower } = useGuessList()
               </navigator>
               <!-- 商品数量 -->
               <view class="count">
-                <text class="text">-</text>
-                <input class="input" type="number" :value="item.count.toString()" />
-                <text class="text">+</text>
+                <vk-data-input-number-box
+                  v-model="item.count"
+                  :min="1"
+                  :max="item.stock"
+                  :index="item.skuId"
+                  @change="onChangeCount"
+                />
               </view>
             </view>
             <!-- 右侧删除按钮 -->
