@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { useMemberStore } from '@/stores'
-import { deleteCartItemAPI, getCartListAPI, changeCartBySkuIdAPI } from '@/services/cart'
+import {
+  deleteCartItemAPI,
+  getCartListAPI,
+  changeCartBySkuIdAPI,
+  cartSelectedAllAPI,
+} from '@/services/cart'
 import { onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { CartItem } from '@/types/cart'
 import { useGuessList } from '@/composables'
 import type { InputNumberBoxEvent } from '@/components/vk-data-input-number-box/vk-data-input-number-box'
+import { computed } from 'vue'
 
 // 获取会员Store
 const memberStore = useMemberStore()
@@ -46,6 +52,49 @@ const onChangeCount = (event: InputNumberBoxEvent) => {
   changeCartBySkuIdAPI(event.index, { count: event.value })
 }
 
+// 修改商品选中状态
+const onChangeSelected = (item: CartItem) => {
+  // console.log(item)
+  // 前端数据更新-选择取反
+  item.selected = !item.selected
+  // 后端数据更新
+  changeCartBySkuIdAPI(item.skuId, { selected: item.selected })
+}
+
+// 计算全选状态
+const isSelectedAll = computed({
+  get: () => {
+    // 通过cartList.value.length来判断数据是否为空
+    return cartList.value.length && cartList.value.every((item) => item.selected)
+  },
+  set: (val) => {
+    // 通过Boolean()将val的值强制转换成boolean，使其符合类型要求
+    cartList.value.forEach((item) => (item.selected = Boolean(val)))
+  },
+})
+
+// 修改全选按钮状态的回调
+const onChangeSelectedAll = () => {
+  // 前端数据更新-选择取反
+  isSelectedAll.value = !isSelectedAll.value
+  // 后端数据更新
+  cartSelectedAllAPI({ selected: isSelectedAll.value })
+}
+
+/* 
+// 另一种修改全选按钮状态的思路
+const onChangeSelectedAll = () => {
+  // 全选状态取反
+  const _isSelectedAll = !isSelectedAll.value
+  // 前端数据更新
+  cartList.value.forEach(item => {
+    item.selected = _isSelectedAll
+  })
+  // 后端数据更新
+  cartSelectedAllAPI({ selected: _isSelectedAll })
+}
+ */
+
 // 调用猜你喜欢板块的组合式函数
 const { guessRef, onScrolltolower } = useGuessList()
 </script>
@@ -68,7 +117,11 @@ const { guessRef, onScrolltolower } = useGuessList()
             <!-- 商品信息 -->
             <view class="goods">
               <!-- 选中状态 -->
-              <text class="checkbox" :class="{ checked: item.selected }"></text>
+              <text
+                class="checkbox"
+                :class="{ checked: item.selected }"
+                @tap="onChangeSelected(item)"
+              ></text>
               <navigator
                 :url="`/pages/goodsdetail/goodsdetail?id=${item.id}`"
                 hover-class="none"
@@ -111,7 +164,7 @@ const { guessRef, onScrolltolower } = useGuessList()
       </view>
       <!-- 吸底工具栏 -->
       <view class="toolbar">
-        <text class="all" :class="{ checked: true }">全选</text>
+        <text class="all" :class="{ checked: isSelectedAll }" @tap="onChangeSelectedAll">全选</text>
         <text class="text">合计:</text>
         <text class="amount">100</text>
         <view class="button-grounp">

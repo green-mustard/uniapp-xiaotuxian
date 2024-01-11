@@ -41,3 +41,12 @@ export const changeCartBySkuIdAPI = (
     data,
   })
 }
+
+// 购物车全选/取消全选的API
+export const cartSelectedAllAPI = (data: { selected: boolean }) => {
+  return http({
+    method: 'PUT',
+    url: '/member/cart/selected',
+    data,
+  })
+}
