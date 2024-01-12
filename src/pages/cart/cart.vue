@@ -69,7 +69,7 @@ const isSelectedAll = computed({
   },
   set: (val) => {
     // 通过Boolean()将val的值强制转换成boolean，使其符合类型要求
-    cartList.value.forEach((item) => (item.selected = Boolean(val)))
+    cartList.value.forEach((item) => (item.selected = val as boolean))
   },
 })
 
@@ -94,6 +94,35 @@ const onChangeSelectedAll = () => {
   cartSelectedAllAPI({ selected: _isSelectedAll })
 }
  */
+
+// 计算选中单品列表
+const selectedCardList = computed(() => {
+  return cartList.value.filter((item) => item.selected)
+})
+
+// 计算选中的总件数
+const selectedCardCount = computed(() => {
+  return selectedCardList.value.reduce((sum, item) => sum + item.count, 0)
+})
+
+// 计算选中的总金额
+const selectedCardAmount = computed(() => {
+  return selectedCardList.value
+    .reduce((sum, item) => sum + item.count * item.nowPrice, 0)
+    .toFixed(2)
+})
+
+// 结算按钮的回调
+const gotoPayment = () => {
+  if (selectedCardCount.value === 0) {
+    return uni.showToast({ icon: 'none', title: '请选择商品' })
+  }
+
+  // 跳转到结算页
+  uni.showToast({
+    title: '功能未完善',
+  })
+}
 
 // 调用猜你喜欢板块的组合式函数
 const { guessRef, onScrolltolower } = useGuessList()
@@ -166,9 +195,15 @@ const { guessRef, onScrolltolower } = useGuessList()
       <view class="toolbar">
         <text class="all" :class="{ checked: isSelectedAll }" @tap="onChangeSelectedAll">全选</text>
         <text class="text">合计:</text>
-        <text class="amount">100</text>
+        <text class="amount">{{ selectedCardAmount }}</text>
         <view class="button-grounp">
-          <view class="button payment-button" :class="{ disabled: true }"> 去结算(10) </view>
+          <view
+            class="button payment-button"
+            :class="{ disabled: selectedCardCount === 0 }"
+            @tap="gotoPayment"
+          >
+            去结算({{ selectedCardCount }})
+          </view>
         </view>
       </view>
     </template>
