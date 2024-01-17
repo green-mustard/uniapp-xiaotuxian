@@ -6,12 +6,15 @@ import {
   changeCartBySkuIdAPI,
   cartSelectedAllAPI,
 } from '@/services/cart'
-import { onShow } from '@dcloudio/uni-app'
+import { onShow, onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { CartItem } from '@/types/cart'
 import { useGuessList } from '@/composables'
 import type { InputNumberBoxEvent } from '@/components/vk-data-input-number-box/vk-data-input-number-box'
 import { computed } from 'vue'
+
+//  获取屏幕边界到安全区域的距离
+const { safeAreaInsets } = uni.getSystemInfoSync()
 
 // 获取会员Store
 const memberStore = useMemberStore()
@@ -117,11 +120,10 @@ const gotoPayment = () => {
   if (selectedCardCount.value === 0) {
     return uni.showToast({ icon: 'none', title: '请选择商品' })
   }
+  console.log(cartList.value)
 
   // 跳转到结算页
-  uni.showToast({
-    title: '功能未完善',
-  })
+  uni.navigateTo({ url: '/pagesOrder/create/create' })
 }
 
 // 调用猜你喜欢板块的组合式函数
@@ -192,7 +194,8 @@ const { guessRef, onScrolltolower } = useGuessList()
         </navigator>
       </view>
       <!-- 吸底工具栏 -->
-      <view class="toolbar">
+      <!-- 通过：style="padding-bottom: env(safe-area-inset-bottom)" 设置工具栏在屏幕底部的安全距离-->
+      <view class="toolbar" style="padding-bottom: env(safe-area-inset-bottom)">
         <text class="all" :class="{ checked: isSelectedAll }" @tap="onChangeSelectedAll">全选</text>
         <text class="text">合计:</text>
         <text class="amount">{{ selectedCardAmount }}</text>
