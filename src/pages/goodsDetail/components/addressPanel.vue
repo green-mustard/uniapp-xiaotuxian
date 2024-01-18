@@ -1,9 +1,25 @@
 // AddressPanel.vue
 <script setup lang="ts">
+import { useAddressStore } from '@/stores/modules/address'
+import type { AddressItem } from '@/types/address'
+
 // 子组件调用父组件的方法
 const emit = defineEmits<{
   (event: 'close'): void
 }>()
+
+defineProps<{
+  addressList: AddressItem[]
+}>()
+
+// 修改收货地址的回调
+const onChangeAddress = (item: AddressItem) => {
+  const addressStore = useAddressStore()
+  // 修改地址
+  addressStore.changeSelecteAddress(item)
+  // 关闭弹窗
+  emit('close')
+}
 </script>
 
 <template>
@@ -14,24 +30,20 @@ const emit = defineEmits<{
     <view class="title">配送至</view>
     <!-- 内容 -->
     <view class="content">
-      <view class="item">
-        <view class="user">李明 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-checked"></text>
-      </view>
-      <view class="item">
-        <view class="user">王东 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-ring"></text>
-      </view>
-      <view class="item">
-        <view class="user">张三 13824686868</view>
-        <view class="address">北京市朝阳区孙河安平北街6号院</view>
-        <text class="icon icon-ring"></text>
+      <view class="item" v-for="item in addressList" :key="item.id" @tap="onChangeAddress(item)">
+        <view class="user">{{ item.receiver }} {{ item.contact }}</view>
+        <view class="address">{{ item.fullLocation }} {{ item.address }}</view>
+        <text class="icon" :class="{ 'icon-checked': item.isDefault }"></text>
       </view>
     </view>
     <view class="footer">
-      <view class="button primary"> 新建地址 </view>
+      <navigator
+        class="button primary"
+        hover-class="none"
+        url="/pagesMember/address-form/address-form"
+      >
+        新建地址
+      </navigator>
       <view v-if="false" class="button primary">确定</view>
     </view>
   </view>
@@ -66,6 +78,7 @@ const emit = defineEmits<{
   max-height: 540rpx;
   overflow: auto;
   padding: 20rpx;
+
   .item {
     padding: 30rpx 50rpx 30rpx 60rpx;
     background-size: 40rpx;
@@ -74,6 +87,7 @@ const emit = defineEmits<{
     background-image: url(https://pcapi-xiaotuxian-front-devtest.itheima.net/miniapp/images/locate.png);
     position: relative;
   }
+
   .icon {
     color: #999;
     font-size: 40rpx;
@@ -82,17 +96,21 @@ const emit = defineEmits<{
     top: 50%;
     right: 0;
   }
+
   .icon-checked {
     color: #27ba9b;
   }
+
   .icon-ring {
     color: #444;
   }
+
   .user {
     font-size: 28rpx;
     color: #444;
     font-weight: 500;
   }
+
   .address {
     font-size: 26rpx;
     color: #666;

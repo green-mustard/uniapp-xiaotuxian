@@ -5,7 +5,7 @@ import { ref } from 'vue'
 import type { AddressItem } from '@/types/address'
 import { useAddressStore } from '@/stores/modules/address'
 
-// 获取收获地址列表数据的回调
+// 获取收货地址列表数据的回调
 const addressList = ref<AddressItem[]>()
 const getAddressListData = async () => {
   const res = await getAddressListAPI()
