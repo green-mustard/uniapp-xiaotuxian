@@ -148,6 +148,12 @@
           "style": {
             "navigationBarTitleText": "创建订单"
           }
+        },
+        {
+          "path": "detail/detail",
+          "style": {
+            "navigationBarTitleText": "detail"
+          }
         }
       ]
     }
