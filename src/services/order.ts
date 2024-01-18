@@ -1,6 +1,6 @@
 /* 订单相关的API */
 
-import type { OrderCreateParams, OrderPreResult } from '@/types/order'
+import type { OrderCreateParams, OrderPreResult, OrderResult } from '@/types/order'
 import { http } from '@/utils/http'
 
 // 填写订单-获取预付订单
@@ -19,7 +19,7 @@ export const getMemberOrderPreNowAPI = (data: {
 }) => {
   return http<OrderPreResult>({
     method: 'GET',
-    url: '/member/order/pre/now',
+    url: 'member/order/pre/now',
     data,
   })
 }
@@ -28,7 +28,15 @@ export const getMemberOrderPreNowAPI = (data: {
 export const postMemberOrderAPI = (data: OrderCreateParams) => {
   return http<{ id: string }>({
     method: 'POST',
-    url: '/member/order',
+    url: 'member/order',
     data,
+  })
+}
+
+// 获取订单详情
+export const getMemberOrderByIdAPI = (id: string) => {
+  return http<OrderResult>({
+    method: 'GET',
+    url: `member/order/${id}`,
   })
 }
