@@ -120,7 +120,7 @@ const gotoPayment = () => {
   if (selectedCardCount.value === 0) {
     return uni.showToast({ icon: 'none', title: '请选择商品' })
   }
-  console.log(cartList.value)
+  // console.log(cartList.value)
 
   // 跳转到结算页
   uni.navigateTo({ url: '/pagesOrder/create/create' })

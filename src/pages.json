@@ -152,7 +152,8 @@
         {
           "path": "detail/detail",
           "style": {
-            "navigationBarTitleText": "detail"
+            "navigationBarTitleText": "detail",
+            "navigationStyle": "custom"
           }
         }
       ]
