@@ -40,6 +40,9 @@ const getMemberOrderPreData = async () => {
       count: query.count,
     })
     orderData.value = res.result
+  } else if (query.orderId) {
+    // 关闭当前页面，跳转订单详情页，传递订单id
+    uni.navigateTo({ url: `/pagesOrder/detail/detail?id=${query.orderId}` })
   } else {
     const res = await getMemberOrderPreAPI()
     // console.log(res);
