@@ -5,6 +5,7 @@ import { ref } from 'vue'
 import { getMemberOrderByIdAPI } from '@/services/order'
 import type { OrderResult } from '@/types/order'
 import { OrderState, orderStateList } from '@/services/constants'
+import { getWxPayMiniPayAPI, getPayMockAPI } from '@/services/pay'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -85,6 +86,21 @@ const onTimeUp = () => {
   // 修改订单状态为已取消
   order.value!.orderState = OrderState.YiQuXiao
 }
+
+// 支付订单的回调
+const onPayOrder = async () => {
+  if (import.meta.env.DEV) {
+    // 开发环境模拟支付
+    getPayMockAPI({ orderId: query.id })
+  } else {
+    // 正式环境的微信支付
+    const res = await getWxPayMiniPayAPI({ orderId: query.id })
+    // console.log(res)
+    wx.requestPayment(res.result)
+  }
+  // 关闭当前页面，再跳转支付页面
+  uni.redirectTo({ url: `/pagesOrder/payment/payment?id=${query.id}` })
+}
 </script>
 
 <template>
@@ -111,6 +127,7 @@ const onTimeUp = () => {
           <view class="tips">
             <text class="money">应付金额: ¥ 99.00</text>
             <text class="time">支付剩余</text>
+            <!-- 倒计时显示 -->
             <uni-countdown
               :second="order.countdown"
               color="#fff"
@@ -120,7 +137,7 @@ const onTimeUp = () => {
               @timeup="onTimeUp"
             />
           </view>
-          <view class="button">去支付</view>
+          <view class="button" @tap="onPayOrder">去支付</view>
         </template>
         <!-- 其他订单状态:展示再次购买按钮 -->
         <template v-else>
