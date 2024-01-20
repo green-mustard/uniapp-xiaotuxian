@@ -2,7 +2,7 @@
 import { useGuessList } from '@/composables'
 import { onReady, onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
-import { getMemberOrderByIdAPI } from '@/services/order'
+import { getMemberOrderByIdAPI, getMemberOrderConsigmentByIdAPI } from '@/services/order'
 import type { OrderResult } from '@/types/order'
 import { OrderState, orderStateList } from '@/services/constants'
 import { getWxPayMiniPayAPI, getPayMockAPI } from '@/services/pay'
@@ -87,9 +87,12 @@ const onTimeUp = () => {
   order.value!.orderState = OrderState.YiQuXiao
 }
 
+// 是否为开发环境
+const isDEv = import.meta.env.DEV
+
 // 支付订单的回调
 const onPayOrder = async () => {
-  if (import.meta.env.DEV) {
+  if (isDEv) {
     // 开发环境模拟支付
     getPayMockAPI({ orderId: query.id })
   } else {
@@ -98,8 +101,18 @@ const onPayOrder = async () => {
     // console.log(res)
     wx.requestPayment(res.result)
   }
-  // 关闭当前页面，再跳转支付页面
+  // 关闭当前页面，再跳转支付结果页面
   uni.redirectTo({ url: `/pagesOrder/payment/payment?id=${query.id}` })
+}
+
+const onOrderSend = async () => {
+  // 模拟发货仅在开发环境下使用，打包到生产环境会剔除以下代码（tree shaking 树摇优化）
+  if (isDEv) {
+    await getMemberOrderConsigmentByIdAPI(query.id)
+    uni.showToast({ icon: 'success', title: '模拟发货成功' })
+    // 主动更新订单状态
+    order.value!.orderState = OrderState.DaiShouHuo
+  }
 }
 </script>
 
@@ -152,7 +165,13 @@ const onPayOrder = async () => {
               再次购买
             </navigator>
             <!-- 待发货状态：模拟发货,开发期间使用,用于修改订单状态为已发货 -->
-            <view v-if="false" class="button"> 模拟发货 </view>
+            <view
+              v-if="isDEv && order.orderState === OrderState.DaiFaHuo"
+              class="button"
+              @tap="onOrderSend"
+            >
+              模拟发货
+            </view>
           </view>
         </template>
       </view>
@@ -240,7 +259,7 @@ const onPayOrder = async () => {
       <view class="toolbar" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
         <!-- 待付款状态:展示支付按钮 -->
         <template v-if="true">
-          <view class="button primary"> 去支付 </view>
+          <view class="button primary" @tap="onPayOrder"> 去支付 </view>
           <view class="button" @tap="popup?.open?.()"> 取消订单 </view>
         </template>
         <!-- 其他订单状态:按需展示按钮 -->

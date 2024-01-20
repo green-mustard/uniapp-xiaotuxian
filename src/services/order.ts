@@ -40,3 +40,11 @@ export const getMemberOrderByIdAPI = (id: string) => {
     url: `member/order/${id}`,
   })
 }
+
+//模拟发货
+export const getMemberOrderConsigmentByIdAPI = (id: string) => {
+  return http({
+    method: 'GET',
+    url: `/member/order/consignment/${id}`,
+  })
+}
