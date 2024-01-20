@@ -48,3 +48,11 @@ export const getMemberOrderConsigmentByIdAPI = (id: string) => {
     url: `/member/order/consignment/${id}`,
   })
 }
+
+// 确认收货
+export const getMemberOrderReceiptAPI = (id: string) => {
+  return http<OrderResult>({
+    method: 'PUT',
+    url: `/member/order/${id}/receipt`,
+  })
+}
