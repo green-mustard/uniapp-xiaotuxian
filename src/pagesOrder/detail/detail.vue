@@ -7,6 +7,7 @@ import {
   getMemberOrderConsigmentByIdAPI,
   getMemberOrderReceiptAPI,
   getMemberOrderLogisticsAPI,
+  deleteMemberOrderAPI,
 } from '@/services/order'
 import type { OrderResult, LogisticItem } from '@/types/order'
 import { OrderState, orderStateList } from '@/services/constants'
@@ -149,6 +150,21 @@ const onReceiptComfirm = () => {
     },
   })
 }
+
+// 删除订单
+const onDeleteOrder = () => {
+  // 二次弹窗确认
+  uni.showModal({
+    content: '确认删除订单吗？',
+    success: (success) => {
+      if (success.confirm) {
+        deleteMemberOrderAPI({ ids: [query.id] })
+        // 关闭当前页面，跳转订单列表页
+        uni.redirectTo({ url: '/pagesOrder/list/list' })
+      }
+    },
+  })
+}
 </script>
 
 <template>
@@ -239,29 +255,26 @@ const onReceiptComfirm = () => {
         <view class="item">
           <navigator
             class="navigator"
-            v-for="item in 2"
-            :key="item"
-            :url="`/pages/goods/goods?id=${item}`"
+            v-for="item in order.skus"
+            :key="item.id"
+            :url="`/pages/goodsdetail/goodsdetail?id=${item.spuId}`"
             hover-class="none"
           >
-            <image
-              class="cover"
-              src="https://yanxuan-item.nosdn.127.net/c07edde1047fa1bd0b795bed136c2bb2.jpg"
-            ></image>
+            <image class="cover" :src="item.image"></image>
             <view class="meta">
-              <view class="name ellipsis">ins风小碎花泡泡袖衬110-160cm</view>
-              <view class="type">藏青小花， 130</view>
+              <view class="name ellipsis">{{ item.name }}</view>
+              <view class="type">{{ item.attrsText }}</view>
               <view class="price">
                 <view class="actual">
                   <text class="symbol">¥</text>
-                  <text>99.00</text>
+                  <text>{{ item.curPrice }}</text>
                 </view>
               </view>
-              <view class="quantity">x1</view>
+              <view class="quantity">x{{ item.quantity }}</view>
             </view>
           </navigator>
           <!-- 待评价状态:展示按钮 -->
-          <view class="action" v-if="true">
+          <view class="action" v-if="order.orderState === OrderState.DaiPingJia">
             <view class="button primary">申请售后</view>
             <navigator url="" class="button"> 去评价 </navigator>
           </view>
@@ -290,7 +303,7 @@ const onReceiptComfirm = () => {
           <view class="item">
             订单编号: {{ query.id }} <text class="copy" @tap="onCopy(query.id)">复制</text>
           </view>
-          <view class="item">下单时间: 2023-04-14 13:14:20</view>
+          <view class="item">下单时间: {{ order.createTime }}</view>
         </view>
       </view>
 
@@ -323,11 +336,12 @@ const onReceiptComfirm = () => {
             确认收货
           </view>
           <!-- 待评价状态: 展示去评价 -->
-          <view class="button" v-if="order?.orderState == OrderState.YiWanCheng"> 去评价 </view>
+          <view class="button" v-if="order?.orderState == OrderState.DaiPingJia"> 去评价 </view>
           <!-- 待评价/已完成/已取消 状态: 展示删除订单 -->
           <view
             class="button delete"
-            v-if="order?.orderState == OrderState.YiQuXiao || OrderState.YiWanCheng"
+            v-if="order?.orderState >= OrderState.DaiPingJia"
+            @tap="onDeleteOrder"
           >
             删除订单
           </view>

@@ -69,3 +69,12 @@ export const getMemberOrderLogisticsAPI = (id: string) => {
     url: `/member/order/${id}/logistics`,
   })
 }
+
+// 删除订单
+export const deleteMemberOrderAPI = (data: { ids: string[] }) => {
+  return http({
+    method: 'DELETE',
+    url: '/member/order',
+    data,
+  })
+}
