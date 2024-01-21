@@ -722,6 +722,8 @@ page {
 
   .delete {
     order: 4;
+    color: rgb(235, 31, 31);
+    border-color: rgb(235, 31, 31);
   }
 
   .button {
