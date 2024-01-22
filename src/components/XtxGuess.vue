@@ -81,6 +81,7 @@ defineExpose({
 :host {
   display: block;
 }
+
 /* 分类标题 */
 .caption {
   display: flex;
@@ -89,6 +90,7 @@ defineExpose({
   padding: 36rpx 0 40rpx;
   font-size: 32rpx;
   color: #262626;
+
   .text {
     display: flex;
     justify-content: center;
@@ -113,6 +115,7 @@ defineExpose({
   flex-wrap: wrap;
   justify-content: space-between;
   padding: 0 20rpx;
+
   .guess-item {
     width: 345rpx;
     padding: 24rpx 20rpx 20rpx;
@@ -121,10 +124,12 @@ defineExpose({
     overflow: hidden;
     background-color: #fff;
   }
+
   .image {
     width: 304rpx;
     height: 304rpx;
   }
+
   .name {
     height: 75rpx;
     margin: 10rpx 0;
@@ -136,16 +141,19 @@ defineExpose({
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
+
   .price {
     line-height: 1;
     padding-top: 4rpx;
     color: #cf4444;
     font-size: 26rpx;
   }
+
   .small {
     font-size: 80%;
   }
 }
+
 // 加载提示文字
 .loading-text {
   text-align: center;
