@@ -108,11 +108,11 @@ const onTimeUp = () => {
 }
 
 // 是否为开发环境
-const isDEv = import.meta.env.DEV
+const isDev = import.meta.env.DEV
 
 // 支付订单的回调
 const onPayOrder = async () => {
-  if (isDEv) {
+  if (isDev) {
     // 开发环境模拟支付
     getPayMockAPI({ orderId: query.id })
   } else {
@@ -125,9 +125,10 @@ const onPayOrder = async () => {
   uni.redirectTo({ url: `/pagesOrder/payment/payment?id=${query.id}` })
 }
 
+// 模拟订单发货的回调
 const onOrderSend = async () => {
   // 模拟发货仅在开发环境下使用，打包到生产环境会剔除以下代码（tree shaking 树摇优化）
-  if (isDEv) {
+  if (isDev) {
     await getMemberOrderConsigmentByIdAPI(query.id)
     uni.showToast({ icon: 'success', title: '模拟发货成功' })
     // 主动更新订单状态
@@ -217,7 +218,7 @@ const onDeleteOrder = () => {
             </navigator>
             <!-- 待发货状态：模拟发货,开发期间使用,用于修改订单状态为已发货 -->
             <view
-              v-if="isDEv && order.orderState === OrderState.DaiFaHuo"
+              v-if="isDev && order.orderState === OrderState.DaiFaHuo"
               class="button"
               @tap="onOrderSend"
             >
