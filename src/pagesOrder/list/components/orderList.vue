@@ -8,7 +8,7 @@ import {
 import { onMounted, ref } from 'vue'
 import { OrderState, orderStateList } from '@/services/constants'
 import { getPayMockAPI, getWxPayMiniPayAPI } from '@/services/pay'
-import { onShow } from '@dcloudio/uni-app'
+import { throttle } from 'lodash'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -25,9 +25,9 @@ const queryParams: OrderListParams = {
   orderState: props.orderState,
 }
 
-// 获取订单列表的数据
 // 定义已结束标记
 const finished = ref(false)
+// 获取订单列表的数据
 const orderList = ref<OrderItem[]>([])
 const getMemberOrderListData = async () => {
   // 判断是否已加载所有内容
@@ -35,7 +35,7 @@ const getMemberOrderListData = async () => {
     return uni.showToast({ icon: 'none', title: '没有更多内容了~' })
   }
   const res = await getMemberOrderListAPI(queryParams)
-  // 数据获取或追加
+  // 数据获取
   orderList.value.push(...res.result.items)
   // 分页条件
   if (queryParams.page! < res.result.pages) {
@@ -47,9 +47,10 @@ const getMemberOrderListData = async () => {
 }
 
 // 页面滚动触底的回调
-const onScrolltolower = async () => {
+const onScrolltolower = throttle(async () => {
+  // 获取数据
   getMemberOrderListData()
-}
+}, 600)
 
 // 组件挂载时调用
 onMounted(() => {
@@ -82,13 +83,10 @@ const onReceiptComfirm = (id: string) => {
     content: '为保障您的权益，请收到货并确认无误后，再确认收货',
     success: async (success) => {
       if (success.confirm) {
-        const res = await getMemberOrderReceiptAPI(id)
-        // 更新订单状态
-        const order = orderList.value.find((item) => item.id === id)
-        order!.orderState = OrderState.DaiPingJia
+        await getMemberOrderReceiptAPI(id)
         // 更新订单列表
-        const result = await getMemberOrderListAPI(queryParams)
-        orderList.value = result.result.items
+        const res = await getMemberOrderListAPI(queryParams)
+        orderList.value = res.result.items
       }
     },
   })
@@ -109,10 +107,34 @@ const onDeleteOrder = (id: string) => {
     },
   })
 }
+
+// 下拉刷新的状态
+const isTriggered = ref(false)
+// 下拉刷新功能待实现
+const onRefresherrefresh = async () => {
+  // 开始下拉动画
+  isTriggered.value = true
+  finished.value = false
+  // 重置数据
+  queryParams.page = 1
+  orderList.value = []
+  // 重新获取订单列表的数据
+  await getMemberOrderListData()
+  // 结束下拉动画
+  isTriggered.value = false
+  finished.value = true
+}
 </script>
 
 <template>
-  <scroll-view scroll-y class="orders" @scrolltolower="onScrolltolower">
+  <scroll-view
+    scroll-y
+    class="orders"
+    refresher-enabled
+    @refresherrefresh="onRefresherrefresh"
+    :refresher-triggered="isTriggered"
+    @scrolltolower="onScrolltolower"
+  >
     <view class="card" v-for="item in orderList" :key="item.id">
       <!-- 订单信息 -->
       <view class="status">

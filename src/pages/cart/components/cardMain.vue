@@ -66,7 +66,7 @@ const onChangeSelected = (item: CartItem) => {
 
 // 计算全选状态
 const isSelectedAll = computed({
-  get: () => {
+  get() {
     // 通过cartList.value.length来判断数据是否为空
     return cartList.value.length && cartList.value.every((item) => item.selected)
   },
